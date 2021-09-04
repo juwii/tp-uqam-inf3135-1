@@ -495,9 +495,9 @@ de doute sur le comportement à adopter dans certaines situations, n'hésitez pa
 Afin de compléter ce travail pratique, vous devrez suivre les étapes suivantes:
 
 1. Créez un clone (*fork*) du [dépôt du
-   projet](https://gitlab.info.uqam.ca/inf3135-ete2020/inf3135-ete2020-tp1).
+   projet](https://gitlab.info.uqam.ca/dogny_g/tp1-inf3135-a21).
 2. Assurez-vous que le dépôt soit privé, pour éviter le plagiat.
-3. Donnez accès à votre dépôt à l'utilisateur `blondin_al` en mode `Developer`.
+3. Donnez accès à votre dépôt à l'utilisateur `dogny_g` en mode `Developer`.
 4. Familiarisez-vous avec le contenu du dépôt, en étudiant chacun des fichiers
    (`README.md`, `sujet.md`, `check.bats`, `.gitlab-ci.yml`, etc.).
 5. Commencez votre développement en versionnant fréquemment l'évolution de
@@ -514,11 +514,11 @@ Afin de compléter ce travail pratique, vous devrez suivre les étapes suivantes
 
 Vous devez cloner le dépôt fourni et l'héberger sur la plateforme [Gitlab du
 département](https://gitlab.info.uqam.ca/). Votre dépôt devra se nommer
-**exactement** `inf3135-ete2020-tp1` et l'URL devra être **exactement**
-`https://gitlab.info.uqam.ca/<utilisateur>/inf3135-ete2020-tp1`, où
+**exactement** `inf3135-automne2020-tp1` et l'URL devra être **exactement**
+`https://gitlab.info.uqam.ca/<utilisateur>/inf3135-automne2020-tp1`, où
 `<utilisateur>` doit être remplacé par votre code MS de l'UQAM ou par votre nom
 d'utilisateur. Il devra être **privé** et accessible seulement par vous et par
-l'utilisateur `blondin_al`.
+l'utilisateur `dogny_g`.
 
 ### Fichier `canvascii.c`
 
