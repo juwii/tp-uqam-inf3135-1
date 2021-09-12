@@ -1,22 +1,16 @@
-stages:
-    - build_stage
-    - test_stage
+before_script:
+    - apt-get update -qq
+    - git clone https://github.com/bats-core/bats-core.git /tmp/bats
+    - mkdir -p /tmp/local
+    - bash /tmp/bats/install.sh /tmp/local
+    - export PATH=$PATH:/tmp/local/bin
 
 build:
-    stage: build_stage
+    stage: build
     script:
         - make
-    artifacts:
-        paths:
-            - canvascii
-        expire_in: 30 mins
 
 test:
-    stage: test_stage
+    stage: test
     script:
-        - apt-get update -qq
-        - git clone https://github.com/bats-core/bats-core.git /tmp/bats
-        - mkdir -p /tmp/local
-        - bash /tmp/bats/install.sh /tmp/local
-        - export PATH=$PATH:/tmp/local/bin
         - make test
