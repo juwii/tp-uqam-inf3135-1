@@ -39,12 +39,7 @@ Aussi, insérer un lien vers le [sujet du travail](sujet.md).
 
 ## Auteur
 
-Indiquez ici votre prénom et nom, puis votre code permanent entre parenthèses,
-sans mettre en gras ou en italique.
-
-Par exemple,
-
-Serge Dogny (ABCD12345678)
+Juliette Létondot (LETJ74550003)
 
 ## Fonctionnement
 
@@ -78,17 +73,17 @@ Indiquez toutes les tâches qui ont été complétés en insérant un `X` entre 
 crochets. Si une tâche n'a pas été complétée, expliquez pourquoi (lors de la
 remise, vous pouvez supprimer ce paragraphe).
 
-* [ ] Le nom du dépôt GitLab est exactement `inf3135-automne2021-tp1` (Pénalité de
+* [X] Le nom du dépôt GitLab est exactement `inf3135-automne2021-tp1` (Pénalité de
   **50%**).
-* [ ] L'URL du dépôt GitLab est exactement (remplacer `utilisateur` par votre
+* [X] L'URL du dépôt GitLab est exactement (remplacer `utilisateur` par votre
   nom identifiant GitLab) `https://gitlab.info.uqam.ca/utilisateur/inf3135-automne2020-tp1`
   (Pénalité de **50%**).
-* [ ] L'utilisateur `dogny_g` a accès au projet en mode *Developer*
+* [X] L'utilisateur `dogny_g` a accès au projet en mode *Developer*
   (Pénalité de **50%**).
-* [ ] Le dépôt GitLab est un *fork* de [ce
+* [X] Le dépôt GitLab est un *fork* de [ce
   dépôt](https://gitlab.info.uqam.ca/dogny_g/tp1-inf3135-a21)
   (Pénalité de **50%**).
-* [ ] Le dépôt GitLab est privé (Pénalité de **50%**).
+* [X] Le dépôt GitLab est privé (Pénalité de **50%**).
 * [ ] Le dépôt contient au moins un fichier `.gitignore`.
 * [ ] Le fichier `Makefile` permet de compiler le projet lorsqu'on entre
   `make`. Il supporte les cibles `html`, `test` et `clean`.
