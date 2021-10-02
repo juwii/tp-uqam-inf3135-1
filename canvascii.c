@@ -49,6 +49,21 @@ Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR] \n\
 [...]\n\
 "
 
+#define ERROR_VALUE_V "\
+Error: incorrect value with option -v \n\
+Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR] \n\
+          [-h ROW] [-v COL] [-r ROW,COL,HEIGHT,WIDTH] \n\
+          [-l ROW1,COL1,ROW2,COL2] [-c ROW,COL,RADIUS] \n\
+[...] \n\
+"
+
+#define ERR_VALUE_COOR_RECT "\
+Error: incorrect value with option -r \n\
+Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR] \n\
+          [-h ROW] [-v COL] [-r ROW,COL,HEIGHT,WIDTH] \n\
+          [-l ROW1,COL1,ROW2,COL2] [-c ROW,COL,RADIUS] \n\
+[...] \n\
+"
 
 struct canvas {
     char pixels[MAX_HEIGHT][MAX_WIDTH]; // A matrix of pixels
@@ -56,6 +71,7 @@ struct canvas {
     unsigned int height;                // Its height
     char pen;                           // The character we are drawing with
 };
+
 
 enum error {
     OK                         = 0, // Everything is ok
@@ -177,7 +193,6 @@ void erreurVirgules(char *ch1, char *ch2, char *chaine){
 
 void supprimerVirgule(char *chaine, struct canvas *c){
 
-	int i,j,l;
 	char *ch1;
 	char *ch2;
 	
@@ -221,7 +236,7 @@ void canvasVide(int argc, char *argvU, char *argvD, struct canvas *c){
 
 void afficheErreurLigneH(struct canvas *c, char *argv[], int i){
 	
-	if(atoi(argv[i + 1])> c->height){
+	if(atoi(argv[i + 1])> c->height || argv[i+1]<0){
 		fprintf(stdout, ERROR_VALUE_H, argv[0]);		
 		exit(7);
 	}
@@ -236,11 +251,91 @@ void traceLigneHorizontale(int argc, char *argv[], struct canvas *c){
 
 	int i;
 	int j;
+
 	for(i = 0; i<argc; i++){
 		if(argv[i][0] == '-' && argv[i][1]=='h'){
 			afficheErreurLigneH(c,argv,i);
 			for(j = 0; j<c->width; j++){
 				c->pixels[atoi(argv[i + 1])][j] = '7';
+			}
+		}
+	}
+}
+
+/* fonction qui gère l'erreur de saisie pour la ligne horizontale
+ * @param struct canvas c *argv
+ */
+
+void afficheErreurLigneV(struct canvas *c, char *argv[], int i){
+
+        if(atoi(argv[i + 1])> c->width || argv[i+1]<0){
+                fprintf(stdout, ERROR_VALUE_V, argv[0]);
+                exit(7);
+        }
+}
+
+/* fonction qui trace une ligne verticale de 7
+ * @param argc argv c
+ */
+
+void traceLigneVerticale(int argc, char *argv[], struct canvas *c){
+	int i;
+        int j;
+        for(i = 0; i<argc; i++){
+                if(argv[i][0] == '-' && argv[i][1]=='v'){
+                        afficheErreurLigneV(c,argv,i);
+                        for(j = 0; j<c->height; j++){
+                                c->pixels[j][atoi(argv[i + 1])] = '7';
+                        }
+                }
+        }
+}
+
+/* fonction qui convertit les données en entrée en int pour obtenir les données du rectangle
+ * @param rectangle argv
+ */
+
+void trouveCoordonneesRect(int *rectangle, char *argv[], int i){
+
+        rectangle[0] = atoi(strtok(argv[i+1], ","));
+	printf("%d\n", rectangle[0]);
+        rectangle[1] = atoi(strtok(NULL, ","));
+	printf("%d\n", rectangle[1]);
+	rectangle[2] = atoi(strtok(NULL, ","));
+	printf("%d\n", rectangle[2]);
+	rectangle[3] = atoi(strtok(NULL, ","));
+	printf("%d\n", rectangle[3]);
+
+	if(rectangle[0]<0 || rectangle[1]<0 || rectangle[2]<0 || rectangle[3]<0){
+		fprintf(stderr, ERR_VALUE_COOR_RECT, argv[0]);
+		exit(7);
+	}
+}
+
+
+/* fonction qui permet de tracer un rectangle
+ * @param argc argv c
+*/
+
+void traceRectangle(int argc, char *argv[], struct canvas *c){
+
+	int i,j,k;
+	int rectangle[4];
+	int *p;
+
+	p = &rectangle[0];
+
+	for(i = 0; i<argc; i++){
+		if(argv[i][0] == '-' && argv[i][1] == 'r'){
+			trouveCoordonneesRect(p,argv,i);
+			// affiche erreur en cas de tailles négatives
+			for(j = rectangle[0] ; j<rectangle[0] + rectangle[2] ; j++){
+				c->pixels[j][rectangle[1]] = '7';
+				c->pixels[j][rectangle[1]+rectangle[3]]='7';
+			}
+			for(k = rectangle[1]; k<rectangle[1] + rectangle[3]; k++){
+				c->pixels[rectangle[0]][k] = '7';
+				c->pixels[rectangle[0]+rectangle[2]-1][k] = '7';
 			}
 		}
 	}
@@ -261,6 +356,10 @@ int main(int argc, char *argv[]) {
     canvasVide(argc, argv[1], argv[2], &c);
 
     traceLigneHorizontale(argc,argv,&c);
+
+    traceLigneVerticale(argc,argv,&c);
+
+    traceRectangle(argc,argv,&c);
 
     creationCanvas(c);
 
