@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// Définition des variables
+#include <ctype.h>
 
 #define MAX_HEIGHT 40
 #define MAX_WIDTH 80
@@ -42,6 +41,15 @@ Drawing options:\n\
                             radius RADIUS with the midpoint algorithm.\n\
 "
 
+#define ERROR_VALUE_H "\
+Error: incorrect value with option -h \n\
+Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR] \n\
+          [-h ROW] [-v COL] [-r ROW,COL,HEIGHT,WIDTH] \n\
+          [-l ROW1,COL1,ROW2,COL2] [-c ROW,COL,RADIUS] \n\
+[...]\n\
+"
+
+
 struct canvas {
     char pixels[MAX_HEIGHT][MAX_WIDTH]; // A matrix of pixels
     unsigned int width;                 // Its width
@@ -61,10 +69,10 @@ enum error {
 };
 
 /* fonction qui affiche le type de l'erreur
- *@ param numéro de l'erreur
+ *@ param err 	numéro de l'erreur
  */
 
-void affichErr(enum error err){
+void afficherErreur(enum error err){
 	switch(err){
 		case '0':
 			fprintf(stderr, "OK");
@@ -97,27 +105,28 @@ void affichErr(enum error err){
  * @param nbLignes nbColonnes : dimensions du canvas
  */
 
-void dimValides(unsigned nbLignes, unsigned nbColonnes){
+void dimensionsValides(unsigned nbLignes, unsigned nbColonnes){
 	
 	enum error err;
 
 	if(nbLignes>MAX_HEIGHT){
 		err = 2;
-		affichErr(err);
+		afficherErreur(err);
 		exit(2);
 	}
 	if(nbColonnes>MAX_WIDTH){
 		err = 3;
-		affichErr(err);
+		afficherErreur(err);
 		exit(3);
 	}
 }
 
 /* fonction qui affiche le manuel si aucun argument n'a été saisi
- * @param argc
+ * @param 	argc	nombre d'arguments
+ * 		*argv	premier argument
  */
 
-void afficheMan(int argc, char *argv){
+void afficherManuel(int argc, char *argv){
 	if (argc == 1){
 		fprintf(stdout, USAGE, argv);
 		exit(0);
@@ -125,71 +134,135 @@ void afficheMan(int argc, char *argv){
 }
 
 /* fonction qui affiche un canevas avec des certaines dimensions et un certain caractere
- * @param nbLignes nbColonnes le nombre de lignes et de colonnes du canevas
+ * @param nbLignes, nbColonnes le nombre de lignes et de colonnes du canevas
  * caractere : le caractere que l'on va afficher
  */
 
-void creationCanvas(unsigned int nbLignes,unsigned int nbColonnes, char caractere){
+void creationCanvas(struct canvas c){
 	
 	int i, j;
 
-	for(i = 0; i<nbColonnes; i++){
-		for(j = 0; j<nbLignes; j++){
-			fprintf(stdout,"%c", caractere);
+	for(i = 0; i<c.height; i++){
+		for(j = 0; j<c.width; j++){
+			fprintf(stdout,"%c", c.pixels[i][j]);
 		}
 		fprintf(stdout,"\n");
 	}
 }
 
+/* fonction qui gère les erreurs de la chaine de caracteres apres le -n
+ * @param ch1 ch2 nbVirgules chaine
+*/
+
+void erreurVirgules(char *ch1, char *ch2, char *chaine){
+	
+	int i;
+	for(i = 0; i<strlen(ch1);i++){
+		if(!isdigit(ch1[i])){
+			exit(7);
+        	}
+	}
+
+	int j;
+	for(j = 0; j<strlen(ch2);j++){
+        	if(!isdigit(ch2[j])){
+              		exit(7);
+		}
+        }
+}
+
+/* fonction qui supprime le caractere virgule d'une chaine de caractères et initialise les dimensions du canevas
+ * @param
+*/
+
+void supprimerVirgule(char *chaine, struct canvas *c){
+
+	int i,j,l;
+	char *ch1;
+	char *ch2;
+	
+	ch1 = strtok(chaine, ",");
+	ch2 = (strtok(NULL, ",")); 
+
+	erreurVirgules(ch1, ch2, chaine);
+
+	c->height = atoi(ch1);
+	c->width = atoi(ch2);
+}
+
+
+
 /* fonction qui affiche un canevas vide quand l'option -n est utilisée
  * @param argc argv[1] argv[2]
  */
 
-void canvasVide(int argc, char *argvU, char *argvD){
-	// a modifier pour nombres > 9 avec itoa
-	if(argc == 3){
-		if(argvU == "-","n"){
-			struct canvas c;
+void canvasVide(int argc, char *argvU, char *argvD, struct canvas *c){
+	
+	if(argvU[0]=='-' && argvU[1] == 'n' && strlen(argvU) == 2){
+		
+		c->pen = '.';
+		supprimerVirgule(argvD, c);
 
-			if(argvD[1] == ','){
-				c.height = (unsigned int) argvD[0] - (unsigned int)'0';
-			} else {
-				//char *arg[];
-				//strcat(*arg,argvD[0]);
-				//strcat(*arg,argv[1]);
-				c.height = (unsigned int)(argvD[0])-(unsigned int)'0';
+		int i,j;
+		for(i = 0; i<c->height; i++){
+			for(j = 0; j<c->width; j++){
+				c->pixels[i][j] = '.';
 			}
-			if(strlen(argvD) == 4 && argvD[1]!=','){
-				c.width = (unsigned int) argvD[3] - (unsigned int)'0';
-			} else if(strlen(argvD) == 3){
-				c.width = (unsigned int) argvD[2] - (unsigned int)'0';
-			} else if(strlen(argvD) == 4 && argvD[1]==','){
-				//strcat(argvD[2], argvD[3]);
-				c.width = (unsigned int)(argvD[2]) - (unsigned int)'0';
-			}
-
-
-			c.width = (unsigned int) argvD[2] - (unsigned int)'0';
-			c.height = (unsigned int) argvD[0] - (unsigned int)'0';
-			// initialiser le pixel = rajouter une fonction
-			dimValides(c.width, c.height);
-			creationCanvas(c.width, c.height, '.');
 		}
+
+		dimensionsValides(c->width, c->height);
+		
 	}
 }
 
+/* fonction qui gère l'erreur de saisie pour la ligne horizontale
+ * @param struct canvas c *argv
+ */
+
+void afficheErreurLigneH(struct canvas *c, char *argv[], int i){
+	
+	if(atoi(argv[i + 1])> c->height){
+		fprintf(stdout, ERROR_VALUE_H, argv[0]);		
+		exit(7);
+	}
+}
+
+
+/* fonction qui affiche une ligne horizontale
+ * @param
+ */
+
+void traceLigneHorizontale(int argc, char *argv[], struct canvas *c){
+
+	int i;
+	int j;
+	for(i = 0; i<argc; i++){
+		if(argv[i][0] == '-' && argv[i][1]=='h'){
+			afficheErreurLigneH(c,argv,i);
+			for(j = 0; j<c->width; j++){
+				c->pixels[atoi(argv[i + 1])][j] = '7';
+			}
+		}
+	}
+}
 
 int main(int argc, char *argv[]) {
 
     //printf("argc = %d\n", argc);
     
     for (unsigned int i = 0; i < argc; ++i) {
-       // printf("argv[%d] = %s\n", i, argv[i]);
+      printf("argv[%d] = %s\n", i, argv[i]);
     }
     
-    afficheMan(argc, argv[0]);
+    struct canvas c;
 
-    canvasVide(argc, argv[1], argv[2]);
+    afficherManuel(argc, argv[0]);
+
+    canvasVide(argc, argv[1], argv[2], &c);
+
+    traceLigneHorizontale(argc,argv,&c);
+
+    creationCanvas(c);
 
     return 0;
 }
