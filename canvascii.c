@@ -117,6 +117,20 @@ void afficherErreur(enum error err){
 	}
 }
 
+
+/* fonction qui permet de changer le caractere avec lequel on dessine le canvas
+ * @param
+ */
+
+void changerCrayon(int argc, char *argv[], struct canvas *c, int i){
+
+        if(argv[i][0] == '-' && argv[i][1] == 'p'){
+                c->pen = argv[i+1][0];
+        }
+
+}
+
+
 /* fonction qui affiche une erreur si les dimensions sont supérieures à la limite fixée
  * @param nbLignes nbColonnes : dimensions du canvas
  */
@@ -217,7 +231,7 @@ void canvasVide(int argc, char *argvU, char *argvD, struct canvas *c){
 		
 		c->pen = '.';
 		supprimerVirgule(argvD, c);
-
+		// -p possible avant ??
 		int i,j;
 		for(i = 0; i<c->height; i++){
 			for(j = 0; j<c->width; j++){
@@ -254,9 +268,10 @@ void traceLigneHorizontale(int argc, char *argv[], struct canvas *c){
 
 	for(i = 0; i<argc; i++){
 		if(argv[i][0] == '-' && argv[i][1]=='h'){
+			changerCrayon(argc,argv,c,i-2);
 			afficheErreurLigneH(c,argv,i);
 			for(j = 0; j<c->width; j++){
-				c->pixels[atoi(argv[i + 1])][j] = '7';
+				c->pixels[atoi(argv[i + 1])][j] = c->pen;
 			}
 		}
 	}
@@ -283,9 +298,10 @@ void traceLigneVerticale(int argc, char *argv[], struct canvas *c){
         int j;
         for(i = 0; i<argc; i++){
                 if(argv[i][0] == '-' && argv[i][1]=='v'){
+			changerCrayon(argc,argv,c,i-2);
                         afficheErreurLigneV(c,argv,i);
                         for(j = 0; j<c->height; j++){
-                                c->pixels[j][atoi(argv[i + 1])] = '7';
+                                c->pixels[j][atoi(argv[i + 1])] = c->pen;
                         }
                 }
         }
@@ -295,20 +311,31 @@ void traceLigneVerticale(int argc, char *argv[], struct canvas *c){
  * @param rectangle argv
  */
 
-void trouveCoordonneesRect(int *rectangle, char *argv[], int i){
+void trouveCoordonnees(int *rectangle, char *argv[], int i, char option){
 
         rectangle[0] = atoi(strtok(argv[i+1], ","));
-	printf("%d\n", rectangle[0]);
         rectangle[1] = atoi(strtok(NULL, ","));
-	printf("%d\n", rectangle[1]);
 	rectangle[2] = atoi(strtok(NULL, ","));
-	printf("%d\n", rectangle[2]);
 	rectangle[3] = atoi(strtok(NULL, ","));
-	printf("%d\n", rectangle[3]);
-
-	if(rectangle[0]<0 || rectangle[1]<0 || rectangle[2]<0 || rectangle[3]<0){
+	
+	// gestion des erreurs du rectangle
+	if(option == 'r'){
+	if(rectangle[2]<0 || rectangle[3]<0){
 		fprintf(stderr, ERR_VALUE_COOR_RECT, argv[0]);
 		exit(7);
+	}
+	}
+
+	if(option == 'l'){
+		if(rectangle[1]>rectangle[3]){
+			int tmp1 = rectangle[0];
+			int tmp2 = rectangle[1];
+			rectangle[0] = rectangle[2];
+			rectangle[1] = rectangle[3];
+			rectangle[2] = tmp1;
+			rectangle[3] = tmp2;
+		
+		}
 	}
 }
 
@@ -327,16 +354,77 @@ void traceRectangle(int argc, char *argv[], struct canvas *c){
 
 	for(i = 0; i<argc; i++){
 		if(argv[i][0] == '-' && argv[i][1] == 'r'){
-			trouveCoordonneesRect(p,argv,i);
+			trouveCoordonnees(p,argv,i,'r');
+			changerCrayon(argc,argv,c,i-2);
 			// affiche erreur en cas de tailles négatives
 			for(j = rectangle[0] ; j<rectangle[0] + rectangle[2] ; j++){
-				c->pixels[j][rectangle[1]] = '7';
-				c->pixels[j][rectangle[1]+rectangle[3]]='7';
+				if(rectangle[1]>=0){
+				c->pixels[j][rectangle[1]] = c->pen;
+				}
+				if(rectangle[1]+rectangle[3]>=0){
+				c->pixels[j][rectangle[1]+rectangle[3]]=c->pen;
+				}
 			}
 			for(k = rectangle[1]; k<rectangle[1] + rectangle[3]; k++){
-				c->pixels[rectangle[0]][k] = '7';
-				c->pixels[rectangle[0]+rectangle[2]-1][k] = '7';
+				if(rectangle[0]>=0){
+				c->pixels[rectangle[0]][k] = c->pen;
+				}
+				if(rectangle[0]+rectangle[2]-1>=0){
+				c->pixels[rectangle[0]+rectangle[2]-1][k] = c->pen;
+				}
 			}
+		}
+	}
+}
+
+/* fonction qui trace un segment entre deux points
+ * @param
+ */
+
+void traceSegment(int argc,char *argv[], struct canvas *c){
+	
+	// obtenir les coordonnées
+	int i,j,k;
+        int segment[4];
+        int *p;
+
+        p = &segment[0];
+
+	for(i = 0; i<argc; i++){
+                if(argv[i][0] == '-' && argv[i][1] == 'l'){
+			changerCrayon(argc,argv,c,i-2);
+			trouveCoordonnees(p,argv,i,'l');
+
+			// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm?section=7#All_cases
+			int dx,sx,dy,sy,err,e2;
+			int etat = 1;
+			dx = abs(segment[2]-segment[0]);
+			sx = segment[0]<segment[2] ? 1 : -1;
+			dy = -abs(segment[3]-segment[1]);
+			sy = segment[1]<segment[3];
+			err = dx + dy;
+			
+			while(etat==1){
+				if(segment[0]>=0){
+				c->pixels[segment[0]][segment[1]] = c->pen;
+				}
+				if(segment[0] == segment[2] && segment[1] == segment[3]){
+				        etat = 0;	
+					break;
+				}
+				e2 = 2*err;
+				if(e2>=dy){
+					err += dy;
+					segment[0] += sx;
+					
+				}
+				if(e2<=dx){
+					err += dx;
+					segment[1] += sy;
+				}
+			}
+
+
 		}
 	}
 }
@@ -350,6 +438,7 @@ int main(int argc, char *argv[]) {
     }
     
     struct canvas c;
+    c.pen = '7';
 
     afficherManuel(argc, argv[0]);
 
@@ -360,6 +449,8 @@ int main(int argc, char *argv[]) {
     traceLigneVerticale(argc,argv,&c);
 
     traceRectangle(argc,argv,&c);
+
+    traceSegment(argc,argv,&c);
 
     creationCanvas(c);
 
