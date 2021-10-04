@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #define MAX_HEIGHT 40
 #define MAX_WIDTH 80
@@ -103,6 +104,7 @@ enum error {
     ERR_WITH_VALUE             = 7  // Problem with value
 };
 
+
 /* fonction qui affiche le type de l'erreur
  *@ param err 	numéro de l'erreur
  */
@@ -173,21 +175,103 @@ void affichePixelColore(int pixel){
 	}
 }
 
+/* fonction qui affiche un canevas avec des certaines dimensions et un certain caractere
+ * @param nbLignes, nbColonnes le nombre de lignes et de colonnes du canevas
+ * caractere : le caractere que l'on va afficher
+ */
+
+void creationCanvas(struct canvas c){
+
+        int i, j;
+
+        if(c.couleur == 0){
+
+        for(i = 0; i<c.height; i++){
+                for(j = 0; j<c.width; j++){
+                        fprintf(stdout,"%c", c.pixels[i][j]);
+                }
+                fprintf(stdout,"\n");
+        }
+
+        }
+}
+
 
 /* fonction qui permet de changer le caractere avec lequel on dessine le canvas
  * @param
  */
 
-void changerCrayon(int argc, char *argv[], struct canvas *c, int i){
+void changerCrayon(int argc, char *argv[], struct canvas *c){
+	
+	int i;
+	int nbArguments = argc;
+	int changementCrayon = 0;
 
-        if(argv[i][0] == '-' && argv[i][1] == 'p'){
-                c->pen = argv[i+1][0];
-        }else{
-		//c->pen = '7';
+	while(nbArguments>1){
+        	if(argv[nbArguments-1][0] == '-' && argv[nbArguments-1][1] == 'p'){
+                	c->pen = argv[i+1][0];
+			changementCrayon = 1;
+			break;
+		}
+		nbArguments-=1;
+	}
+
+	if(changementCrayon == 0){
+		c->pen = '7';
 	}
 
 }
 
+/* fonction qui remplit le tableau de pixels avec les données d'un fichier en stdin
+ * @param argc argv struct canvas c
+ */
+
+void rempliPixelsAvecStdin(int *argc, char *argv[], struct canvas *c){
+	
+	if(*argc>1){
+
+	if(argv[1][1] != 'n'){
+
+	FILE* fichier = stdin;
+	int i,j;
+	i = 0; 
+	j = 0;
+	char caractere;
+
+	// affich erreur en cas d'echec ouverture
+	
+	fseek(fichier,0,SEEK_SET);
+	
+	if(fichier == NULL){
+		printf("erreur");
+	}
+	
+	while(!feof(fichier)){
+		caractere = (char)fgetc(fichier);
+		if(caractere == '\n'){
+			i = i + 1;
+			c->width = j;
+			j = 0;
+		
+		} else {
+			c->pixels[i][j] = caractere;
+			j = j + 1;
+		}
+	}
+	
+	fclose(fichier);
+
+	c->height = i;
+	
+	int k;
+	for(k = 0; k<*argc; k++){	
+	if(argv[k][0] == '-' && argv[k][1] == 's'){
+		*argc = k+1;
+	}
+	}
+	}
+	}
+}
 
 /* fonction qui affiche une erreur si les dimensions sont supérieures à la limite fixée
  * @param nbLignes nbColonnes : dimensions du canvas
@@ -218,27 +302,6 @@ void afficherManuel(int argc, char *argv){
 	if (argc == 1){
 		fprintf(stdout, USAGE, argv);
 		exit(0);
-	}
-}
-
-/* fonction qui affiche un canevas avec des certaines dimensions et un certain caractere
- * @param nbLignes, nbColonnes le nombre de lignes et de colonnes du canevas
- * caractere : le caractere que l'on va afficher
- */
-
-void creationCanvas(struct canvas c){
-	
-	int i, j;
-	
-	if(c.couleur == 0){
-
-	for(i = 0; i<c.height; i++){
-		for(j = 0; j<c.width; j++){
-			fprintf(stdout,"%c", c.pixels[i][j]);
-		}
-		fprintf(stdout,"\n");
-	}
-
 	}
 }
 
@@ -330,7 +393,7 @@ void traceLigneHorizontale(int argc, char *argv[], struct canvas *c){
 
 	for(i = 0; i<argc; i++){
 		if(argv[i][0] == '-' && argv[i][1]=='h'){
-			changerCrayon(argc,argv,c,i-2);
+			changerCrayon(argc,argv,c);
 			afficheErreurLigneH(c,argv,i);
 			for(j = 0; j<c->width; j++){
 				c->pixels[atoi(argv[i + 1])][j] = c->pen;
@@ -360,7 +423,7 @@ void traceLigneVerticale(int argc, char *argv[], struct canvas *c){
         int j;
         for(i = 0; i<argc; i++){
                 if(argv[i][0] == '-' && argv[i][1]=='v'){
-			changerCrayon(argc,argv,c,i-2);
+			changerCrayon(argc,argv,c);
                         afficheErreurLigneV(c,argv,i);
                         for(j = 0; j<c->height; j++){
                                 c->pixels[j][atoi(argv[i + 1])] = c->pen;
@@ -418,7 +481,7 @@ void traceRectangle(int argc, char *argv[], struct canvas *c){
 	for(i = 0; i<argc; i++){
 		if(argv[i][0] == '-' && argv[i][1] == 'r'){
 			trouveCoordonnees(p,argv,i,'r');
-			changerCrayon(argc,argv,c,i-2);
+			changerCrayon(argc,argv,c);
 			// affiche erreur en cas de tailles négatives
 			for(j = rectangle[0] ; j<rectangle[0] + rectangle[2] ; j++){
 				if(rectangle[1]>=0){
@@ -455,7 +518,7 @@ void traceSegment(int argc,char *argv[], struct canvas *c){
 
 	for(i = 0; i<argc; i++){
                 if(argv[i][0] == '-' && argv[i][1] == 'l'){
-			changerCrayon(argc,argv,c,i-2);
+			changerCrayon(argc,argv,c);
 			trouveCoordonnees(p,argv,i,'l');
 
 			// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm?section=7#All_cases
@@ -515,7 +578,7 @@ void traceCercle(int argc, char *argv[], struct canvas *c)
 
 	for(i = 0; i<argc; i++){
                 if(argv[i][0] == '-' && argv[i][1] == 'c'){
-			changerCrayon(argc,argv,c,i-2);
+			changerCrayon(argc,argv,c);
 
 			cercle[0] = atoi(strtok(argv[i+1], ","));
         		cercle[1] = atoi(strtok(NULL, ","));
@@ -616,33 +679,21 @@ int main(int argc, char *argv[]) {
     c.pen = '7';
     c.couleur = 0;
 
-    afficherManuel(argc, argv[0]);
+    rempliPixelsAvecStdin(&argc, argv, &c);
 
-    c.pen = '7';
+    afficherManuel(argc, argv[0]);
 
     canvasVide(argc, argv[1], argv[2], &c);
 
-    c.pen = '7';
-
     traceLigneHorizontale(argc,argv,&c);
-
-    c.pen = '7';
 
     traceLigneVerticale(argc,argv,&c);
 
-    c.pen = '7';
-
     traceRectangle(argc,argv,&c);
-
-    c.pen = '7';
 
     traceSegment(argc,argv,&c);
 
-    c.pen = '7';
-
     traceCercle(argc,argv,&c);
-
-    //c.pen = '7';
 
     afficheCouleurs(argc,argv,&c);
 
