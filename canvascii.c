@@ -65,11 +65,30 @@ Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR] \n\
 [...] \n\
 "
 
+#define ERROR_VALUE_C "\
+Error: incorrect value with option -c \n\
+Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR] \n\
+          [-h ROW] [-v COL] [-r ROW,COL,HEIGHT,WIDTH] \n\
+          [-l ROW1,COL1,ROW2,COL2] [-c ROW,COL,RADIUS] \n\
+[...] \n\
+"
+
+#define RESET "\x1B[0m" // remise a zero
+#define NOIR "\x1B[40m" //0
+#define ROUGE "\x1B[41m" //1
+#define VERT "\x1B[42m" //2
+#define JAUNE "\x1B[43m" //3 
+#define BLEU "\x1B[44m" //4
+#define ROSE "\x1B[45m" //5
+#define CYAN "\x1B[46m" //6
+#define BLANC "\x1B[47m" //7
+
 struct canvas {
     char pixels[MAX_HEIGHT][MAX_WIDTH]; // A matrix of pixels
     unsigned int width;                 // Its width
     unsigned int height;                // Its height
     char pen;                           // The character we are drawing with
+    int couleur;			// 0 si sans couleur 1 sinon
 };
 
 
@@ -117,6 +136,43 @@ void afficherErreur(enum error err){
 	}
 }
 
+/* fonction qui affiche les pixels colorés
+ * @param int pixel
+ */
+
+void affichePixelColore(int pixel){
+
+	switch(pixel){
+		case '0':
+			fprintf(stdout, NOIR " " RESET);
+			break;
+		case '1':
+			fprintf(stdout, ROUGE " " RESET);
+			break;
+		case '2':
+			fprintf(stdout, VERT " " RESET);
+			break;
+		case '3':
+			fprintf(stdout, JAUNE " " RESET);
+                        break;
+		case '4':
+			fprintf(stdout, BLEU " " RESET);
+                        break;
+		case '5':
+			fprintf(stdout, ROSE " " RESET);
+                        break;
+		case '6':
+			fprintf(stdout, CYAN " " RESET);
+                        break;
+		case '7':
+			fprintf(stdout, BLANC " " RESET);
+                        break;
+		default:
+			fprintf(stdout, " ");
+			break;
+	}
+}
+
 
 /* fonction qui permet de changer le caractere avec lequel on dessine le canvas
  * @param
@@ -126,7 +182,9 @@ void changerCrayon(int argc, char *argv[], struct canvas *c, int i){
 
         if(argv[i][0] == '-' && argv[i][1] == 'p'){
                 c->pen = argv[i+1][0];
-        }
+        }else{
+		//c->pen = '7';
+	}
 
 }
 
@@ -171,12 +229,16 @@ void afficherManuel(int argc, char *argv){
 void creationCanvas(struct canvas c){
 	
 	int i, j;
+	
+	if(c.couleur == 0){
 
 	for(i = 0; i<c.height; i++){
 		for(j = 0; j<c.width; j++){
 			fprintf(stdout,"%c", c.pixels[i][j]);
 		}
 		fprintf(stdout,"\n");
+	}
+
 	}
 }
 
@@ -320,6 +382,7 @@ void trouveCoordonnees(int *rectangle, char *argv[], int i, char option){
 	
 	// gestion des erreurs du rectangle
 	if(option == 'r'){
+
 	if(rectangle[2]<0 || rectangle[3]<0){
 		fprintf(stderr, ERR_VALUE_COOR_RECT, argv[0]);
 		exit(7);
@@ -429,6 +492,118 @@ void traceSegment(int argc,char *argv[], struct canvas *c){
 	}
 }
 
+/* fonction qui affiche une erreur en cas de rayon negatif
+ * @param
+ */
+
+void afficheErreurCercle(int rayon, char *argv[]){
+	if(rayon<0){
+		fprintf(stderr, ERROR_VALUE_C, argv[0]);
+		exit(7);
+	}
+}
+
+/* fonction qui trace un cercle
+ * @param
+ */
+
+void traceCercle(int argc, char *argv[], struct canvas *c)
+{
+
+	int i;
+	int cercle[3];
+
+	for(i = 0; i<argc; i++){
+                if(argv[i][0] == '-' && argv[i][1] == 'c'){
+			changerCrayon(argc,argv,c,i-2);
+
+			cercle[0] = atoi(strtok(argv[i+1], ","));
+        		cercle[1] = atoi(strtok(NULL, ","));
+        		cercle[2] = atoi(strtok(NULL, ","));
+			afficheErreurCercle(cercle[2],argv);
+
+			int f = 1 - cercle[2];
+			int ddF_x = 0;
+    			int ddF_y = -2 * cercle[2];
+    			int x = 0;
+    			int y = cercle[2];
+			
+			if(cercle[0]>=0 && cercle[1]+cercle[2]>=0){
+			c->pixels[cercle[0]][cercle[1]+cercle[2]] = c->pen;
+			}
+			if(cercle[0]>=0 && cercle[1]-cercle[2]>=0){
+			c->pixels[cercle[0]][cercle[1]-cercle[2]] = c->pen;
+			}
+			if(cercle[0]+cercle[2]>=0 && cercle[1]>=0){
+			c->pixels[cercle[0]+cercle[2]][cercle[1]] = c->pen;
+			}
+			if(cercle[0]-cercle[2]>=0 && cercle[1]>=0){
+			c->pixels[cercle[0]-cercle[2]][cercle[1]]=c->pen;
+			}
+
+    			while(x < y){
+        			if(f >= 0) {		
+            				y--;
+            				ddF_y += 2;
+            				f += ddF_y;
+       				}
+    		
+        			x++;
+        			ddF_x += 2;
+        			f += ddF_x + 1;
+
+				if(cercle[0]+x>=0 && cercle[1]+y>=0){
+				c->pixels[cercle[0]+x][cercle[1]+y] = c->pen;
+				}
+				if(cercle[0]-x>=0 && cercle[1]+y>=0){
+				c->pixels[cercle[0]-x][cercle[1]+y] = c->pen;
+				}
+				if(cercle[0]+x>=0 && cercle[1]-y>=0){
+				c->pixels[cercle[0]+x][cercle[1]-y] = c->pen;
+				}
+				if(cercle[0]-x>=0 && cercle[1]-y>=0){
+				c->pixels[cercle[0]-x][cercle[1]-y] = c->pen;
+				}
+				if(cercle[0]+y>=0 && cercle[1]+x>=0){
+				c->pixels[cercle[0]+y][cercle[1]+x] = c->pen;
+				}
+				if(cercle[0]-y>=0 && cercle[1]+x>=0){
+				c->pixels[cercle[0]-y][cercle[1]+x] = c->pen;
+				}
+				if(cercle[0]+y>=0 && cercle[1]-x>=0){
+				c->pixels[cercle[0]+y][cercle[1]-x] = c->pen;
+				}
+				if(cercle[0]-y>=0 && cercle[1]-x>=0){
+				c->pixels[cercle[0]-y][cercle[1]-x] = c->pen;
+				}
+    			}
+		}
+	}
+}
+
+
+/* fonction qui affiche les pixels en couleur
+ * @param argc argv c
+ */
+
+void afficheCouleurs(int argc, char *argv[], struct canvas *c){
+	
+	int i;	
+	for(i = 0; i<argc; i++){
+		if(argv[i][0] == '-' && argv[i][1] == 'k'){
+			c->couleur = 1;		
+			int j,k;
+			for(j = 0; j<c->height; j++){
+				for(k = 0; k<c->width; k++){
+					affichePixelColore(c->pixels[j][k]);
+				}
+				fprintf(stdout,"\n");
+			}
+		}
+	}
+}
+
+
 int main(int argc, char *argv[]) {
 
     //printf("argc = %d\n", argc);
@@ -439,18 +614,37 @@ int main(int argc, char *argv[]) {
     
     struct canvas c;
     c.pen = '7';
+    c.couleur = 0;
 
     afficherManuel(argc, argv[0]);
 
+    c.pen = '7';
+
     canvasVide(argc, argv[1], argv[2], &c);
+
+    c.pen = '7';
 
     traceLigneHorizontale(argc,argv,&c);
 
+    c.pen = '7';
+
     traceLigneVerticale(argc,argv,&c);
+
+    c.pen = '7';
 
     traceRectangle(argc,argv,&c);
 
+    c.pen = '7';
+
     traceSegment(argc,argv,&c);
+
+    c.pen = '7';
+
+    traceCercle(argc,argv,&c);
+
+    //c.pen = '7';
+
+    afficheCouleurs(argc,argv,&c);
 
     creationCanvas(c);
 
