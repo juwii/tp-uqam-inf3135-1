@@ -1,13 +1,18 @@
-/*
- * Documentation
+/**
+ * TP 1 : affichage d'un canvas avec differentes formes geometriques et possiblement en couleurs
+ * @author	Juliette Létondot 
  */
 
+
+// import des librairies
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 
+
+// definition des constantes
 #define MAX_HEIGHT 40
 #define MAX_WIDTH 80
 #define USAGE "\
@@ -112,6 +117,7 @@ Usage: %s [-n HEIGHT,WIDTH] [-s] [-k] [-p CHAR]\n\
 #define CYAN "\x1B[46m" //6
 #define BLANC "\x1B[47m" //7
 
+// Declaration des types
 struct canvas {
     char pixels[MAX_HEIGHT][MAX_WIDTH]; // A matrix of pixels
     unsigned int width;                 // Its width
@@ -133,9 +139,11 @@ enum error {
 };
 
 
+// Declaration des fonctions
 
-/** fonction qui affiche le type de l'erreur
- *@ param	err 	numéro de l'erreur
+/** 
+ * fonction qui affiche le type de l'erreur
+ * @param	err 	numéro de l'erreur
  		valeurPixel	valeur du pixel faux
 		option	option qui pose probleme
 		argv	liste des arguments en entree
@@ -143,19 +151,22 @@ enum error {
 void afficherErreur(enum error err, char option,char valeurPixel,char *argv[]);
 
 
-/** fonction qui affiche les pixels colorés
+/**
+ * fonction qui affiche les pixels colorés
  * @param int pixel     pixel a afficher
  */
 void affichePixelColore(int pixel);
 
 
-/** fonction qui affiche un canvas avec des certaines dimensions et un certain caractere
+/**
+ * fonction qui affiche un canvas avec des certaines dimensions et un certain caractere
  * @param       struct canvas c	le canvas a afficher
  */
 void creationCanvas(struct canvas c);
 
 
-/** fonction qui affiche une erreur si les dimensions sont supérieures à la limite fixée
+/**
+ * fonction qui affiche une erreur si les dimensions sont supérieures à la limite fixée
  * @param	nbLignes	nombre de lignes du canvas
  * 		nbColonnes	nombre de colonnes du canvas
  * 		argv		la liste des arguments en entree
@@ -163,7 +174,8 @@ void creationCanvas(struct canvas c);
 void dimensionsValides(unsigned nbLignes, unsigned nbColonnes, char *argv[]);
 
 
-/** fonction qui permet de changer le caractere avec lequel on dessine le canvas
+/**
+ * fonction qui permet de changer le caractere avec lequel on dessine le canvas
  * @param       argc    nombre d'arguments
  *              argv    liste des arguments en entree
  *              c       pointeur vers un canvas
@@ -171,32 +183,34 @@ void dimensionsValides(unsigned nbLignes, unsigned nbColonnes, char *argv[]);
 void changerCrayon(int argc, char *argv[], struct canvas *c);
 
 
-/** fonction qui remplit le tableau de pixels avec les données d'un fichier en stdin
- * @param	argc		pointeur vers le nombre d'arguments en entree 
- * 		argv		la liste des arguments en entree
+/**
+ * fonction qui remplit le tableau de pixels avec les données d'un fichier en stdin
+ * @param	argv		la liste des arguments en entree
  * 		struct canvas c	le canvas
  */
-void rempliPixelsAvecStdin(int *argc, char *argv[], struct canvas *c);
+void rempliPixelsAvecStdin(char *argv[], struct canvas *c);
 
 
-/* fonction qui affiche le manuel si aucun argument n'a été saisi
+/**
+ * fonction qui affiche le manuel si aucun argument n'a été saisi
  * @param       argc    nombre d'arguments
  *              *argv   premier argument
  */
 void afficherManuel(int argc, char *argv);
 
 
-/* fonction qui gère les erreurs de la chaine de caracteres apres le -n
+/**
+ * fonction qui gère les erreurs de la chaine de caracteres apres le -n
  * @param	ch1		premier argument de l'option
- * 		ch2 		deuxieme argument de l'option
- * 		chaine		chaine totale 	
+ * 		ch2 		deuxieme argument de l'option 	
  * 		option		option entree
  * 		argv		entrees
 */
-void erreurVirgules(char *ch1, char *ch2, char *chaine, char option, char *argv[]);
+void erreurVirgules(char *ch1, char *ch2, char option, char *argv[]);
 
 
-/** fonction qui supprime le caractere virgule d'une chaine de caractères et initialise les dimensions du canevas
+/**
+ * fonction qui supprime le caractere virgule d'une chaine de caractères et initialise les dimensions du canevas
  * @param       chaine	arguments de l'option
  * 		c	canvas
  * 		option	option souhaitee
@@ -205,23 +219,26 @@ void erreurVirgules(char *ch1, char *ch2, char *chaine, char option, char *argv[
 void supprimerVirgule(char *chaine, struct canvas *c,char option, char *argv[]);
 
 
-/* fonction qui affiche un canevas vide quand l'option -n est utilisée
+/**
+ * fonction qui affiche un canevas vide quand l'option -n est utilisée
  * @param	argc	nombre d'entrees 
  * 		argvU	pointeur vers le premier argument 
  * 		argv[2]	pointeur vers le deuxieme argument
  * 		c	pointeur vers le canvas
  */
-void canvasVide(int argc, char *argv[], char *argvU, char *argvD, struct canvas *c);
+void canvasVide(char *argv[], char *argvD, struct canvas *c);
 
 
-/* fonction qui gère l'erreur de saisie pour la ligne horizontale
+/**
+ * fonction qui gère l'erreur de saisie pour la ligne horizontale
  * @param 	struct canvas c	pointeur vers un canvas 
  * 		*argv		liste des arguments en entree
  */
 void afficheErreurLigneH(struct canvas *c, char *argv[], int i);
 
 
-/* fonction qui affiche une ligne horizontale
+/**
+ * fonction qui affiche une ligne horizontale
  * @param	i	indice de argv ou il y a l'option
  * 		argv	liste des arguments en entree
  * 		c	pointeur vers le canvas
@@ -229,14 +246,16 @@ void afficheErreurLigneH(struct canvas *c, char *argv[], int i);
 void traceLigneHorizontale(int i, char *argv[], struct canvas *c);
 
 
-/* fonction qui gère l'erreur de saisie pour la ligne horizontale
+/**
+ * fonction qui gère l'erreur de saisie pour la ligne horizontale
  * @param 	struct canvas c	pointeur vers le canvas 
  * 		*argv		liste des arguments en entree
  */
 void afficheErreurLigneV(struct canvas *c, char *argv[], int i);
 
 
-/* fonction qui trace une ligne verticale 
+/**
+ * fonction qui trace une ligne verticale 
  * @param	i	indice de la liste argv ou il y a l'option
  * 		argv	liste des arguments en entree
  * 		c	pointeur vers un canvas
@@ -244,7 +263,8 @@ void afficheErreurLigneV(struct canvas *c, char *argv[], int i);
 void traceLigneVerticale(int i, char *argv[], struct canvas *c);
 
 
-/* fonction qui convertit les données en entrée en int pour obtenir les données du rectangle
+/**
+ * fonction qui convertit les données en entrée en int pour obtenir les données du rectangle
  * @param 	rectangle	pointeur vers un tableau qui contiendra les coordonnees
  * 		argv		liste des arguments en entree
  * 		i		indice de la liste argv ou il y a l'option 
@@ -253,7 +273,8 @@ void traceLigneVerticale(int i, char *argv[], struct canvas *c);
 void trouveCoordonnees(int *rectangle, char *argv[], int i, char option);
 
 
-/* fonction qui permet de tracer un rectangle
+/**
+ * fonction qui permet de tracer un rectangle
  * @param	i	indice de argv ou il y a l'option	 
  * 		argv 	liste des arguments en entree
  * 		c	pointeur vers un canvas
@@ -261,7 +282,8 @@ void trouveCoordonnees(int *rectangle, char *argv[], int i, char option);
 void traceRectangle(int i, char *argv[], struct canvas *c);
 
 
-/* fonction qui trace un segment entre deux points
+/**
+ * fonction qui trace un segment entre deux points
  * @param	i	indice de argv ou il y a l'option
  * 		argv	liste des arguments en entree
  * 		c	pointeur vers un canvas
@@ -269,14 +291,16 @@ void traceRectangle(int i, char *argv[], struct canvas *c);
 void traceSegment(int i,char *argv[], struct canvas *c);
 
 
-/* fonction qui affiche une erreur en cas de rayon negatif
+/**
+ * fonction qui affiche une erreur en cas de rayon negatif
  * @param	rayon	entier rayon du cercle souhaite
  * 		argv	liste des arguments en entree
  */
 void afficheErreurCercle(int rayon, char *argv[]);
 
 
-/* fonction qui trace un cercle
+/**
+ * fonction qui trace un cercle
  * @param	i	indice de argv ou il y a l'option
  * 		argv	liste des arguments en entree
  * 		c	pointeur vers un canvas
@@ -284,31 +308,31 @@ void afficheErreurCercle(int rayon, char *argv[]);
 void traceCercle(int i, char *argv[], struct canvas *c);
 
 
-/* fonction qui affiche les pixels en couleur
- * @param	argc	nombre d'arguments en entree 
- * 		argv 	liste des arguments en entree
- * 		c	pointeur vers un canvas
+/**
+ * fonction qui affiche les pixels en couleur
+ * @param	c	pointeur vers un canvas
  */
-void afficheCouleurs(int argc, char *argv[], struct canvas *c);
+void afficheCouleurs(struct canvas *c);
 
 
-/* fonction qui detecte un caractere interdit dans le canvas
- * @param       argc	nombre d'arguments en entree
- *              argv	liste des arguments en entree
+/**
+ * fonction qui detecte un caractere interdit dans le canvas
+ * @param       argv	liste des arguments en entree
  *              struct canvas c	pointeur vers un canvas
  */
-void erreurCaractereInterdit(int argc, char *argv[], struct canvas *c);
+void erreurCaractereInterdit(char *argv[], struct canvas *c);
 
 
-/* fonction qui appelle toutes les fonctions de gestion d'erreur
- * @param       argc		nombre d'arguments en entree
- *              argv		liste des arguments en entree
+/**
+ * fonction qui appelle toutes les fonctions de gestion d'erreur
+ * @param       argv		liste des arguments en entree
  *              struct canvas *c pointeur vers un canvas
  */
-void gestionErreurs(int argc, char *argv[], struct canvas *c);
+void gestionErreurs(char *argv[], struct canvas *c);
 
 
-/* fonction qui check si les arguments de l'option sont bons
+/**
+ * fonction qui check si les arguments de l'option sont bons
  * @param	i	indice de l'option dans argv
  * 		option	option souhaitee
  * 		argv	liste des arguments en entree
@@ -316,14 +340,15 @@ void gestionErreurs(int argc, char *argv[], struct canvas *c);
 void verifierArgOptions(int i, char option, int argc, char *argv[]);
 
 
-/* fonction qui appelle les options en fonction de l'entree
+/**
+ * fonction qui appelle les options en fonction de l'entree
  * @param       argc	nombre d'arguments en entree
  *              argv	liste des arguments
  */
 void appelOptions(int argc, char *argv[], struct canvas *c);
 
 
-
+// Implementation des fonctions
 void afficherErreur(enum error err, char option,char valeurPixel,char *argv[]){
 	switch(err){
 		case 0:
@@ -390,8 +415,8 @@ void affichePixelColore(int pixel){
 void creationCanvas(struct canvas c){
         int i, j;
         if(c.couleur == 0){
-        	for(i = 0; i<c.height; i++){
-                	for(j = 0; j<c.width; j++){
+        	for(i = 0; (unsigned int)i<c.height; i++){
+                	for(j = 0; (unsigned int)j<c.width; j++){
                         	fprintf(stdout,"%c", c.pixels[i][j]);
                 	}
                 	fprintf(stdout,"\n");
@@ -417,7 +442,6 @@ void dimensionsValides(unsigned nbLignes, unsigned nbColonnes, char *argv[]){
 
 
 void changerCrayon(int argc, char *argv[], struct canvas *c){	
-	int i;
 	int nbArguments = argc;
 	int changementCrayon = 0;
  	while(nbArguments>2){
@@ -438,7 +462,7 @@ void changerCrayon(int argc, char *argv[], struct canvas *c){
 }
 
 
-void rempliPixelsAvecStdin(int *argc, char *argv[], struct canvas *c){
+void rempliPixelsAvecStdin(char *argv[], struct canvas *c){
 	FILE* fichier = stdin;
 	int i,j;
 	i = j = 0;
@@ -452,7 +476,7 @@ void rempliPixelsAvecStdin(int *argc, char *argv[], struct canvas *c){
 		if(caractere == '\n'){
 			i = i + 1;
 			dimensionsValides(i, j, argv);
-			if(i>1 && j!=c->width && j<=80 && i<=40){
+			if(i>1 && (unsigned int)j!=c->width && j<=80 && i<=40){
 				afficherErreur(4,'n','.',argv);
 				exit(4);
 			}
@@ -478,16 +502,16 @@ void afficherManuel(int argc, char *argv){
 }
 
 
-void erreurVirgules(char *ch1, char *ch2, char *chaine, char option, char *argv[]){	
+void erreurVirgules(char *ch1, char *ch2, char option, char *argv[]){	
 	int i;
-	for(i = 0; i<strlen(ch1);i++){
+	for(i = 0; (long unsigned int)i<strlen(ch1);i++){
 		if(!isdigit(ch1[i])){
 			afficherErreur(7,option,'.',argv);
 			exit(7);
         	}
 	}
 	int j;
-	for(j = 0; j<strlen(ch2);j++){
+	for(j = 0; (long unsigned int)j<strlen(ch2);j++){
         	if(!isdigit(ch2[j])){
 			afficherErreur(7,option,'.',argv);
               		exit(7);
@@ -504,7 +528,7 @@ void supprimerVirgule(char *chaine, struct canvas *c,char option, char *argv[]){
 		afficherErreur(7,option,'.',argv);
 		exit(7);
 	}	
-	erreurVirgules(ch1, ch2, chaine,option,argv);
+	erreurVirgules(ch1, ch2,option,argv);
 	if(option!='n'){
 		dimensionsValides(atoi(ch1), atoi(ch2),argv);
 	}
@@ -513,23 +537,23 @@ void supprimerVirgule(char *chaine, struct canvas *c,char option, char *argv[]){
 }
 
 
-void canvasVide(int argc, char *argv[], char *argvU, char *argvD, struct canvas *c){
-		supprimerVirgule(argvD, c, 'n', argv);
-		int i,j;
-		if(c->height>MAX_HEIGHT || c->width>MAX_WIDTH){
-                	afficherErreur(7,'n','.',argv);
-                	exit(7);
-        	}
-		for(i = 0; i<c->height; i++){
-			for(j = 0; j<c->width; j++){
-				c->pixels[i][j] = '.';
-			}
+void canvasVide(char *argv[], char *argvD, struct canvas *c){
+	supprimerVirgule(argvD, c, 'n', argv);
+	int i,j;
+	if((unsigned int)c->height>MAX_HEIGHT || (unsigned int)c->width>MAX_WIDTH){
+        	afficherErreur(7,'n','.',argv);
+                exit(7);
+        }
+	for(i = 0; (unsigned int)i<c->height; i++){
+		for(j = 0; (unsigned int)j<c->width; j++){
+			c->pixels[i][j] = '.';
 		}
+	}
 }
 
 
 void afficheErreurLigneH(struct canvas *c, char *argv[], int i){
-	if(atoi(argv[i + 1])>= c->height || atoi(argv[i+1])<=0){
+	if((unsigned int)atoi(argv[i + 1])>= c->height || atoi(argv[i+1])<=0){
 		afficherErreur(7,'h','.',argv);		
 		exit(7);
 	}
@@ -540,14 +564,14 @@ void traceLigneHorizontale(int i, char *argv[], struct canvas *c){
 	int j;
 	changerCrayon(i,argv,c);
 	afficheErreurLigneH(c,argv,i);
-	for(j = 0; j<c->width; j++){
+	for(j = 0; (unsigned int)j<c->width; j++){
 		c->pixels[atoi(argv[i + 1])][j] = c->pen;
 	}
 }
 
 
 void afficheErreurLigneV(struct canvas *c, char *argv[], int i){
-        if(atoi(argv[i + 1])>= c->width || argv[i+1]<=0){
+        if((unsigned int)atoi(argv[i + 1])>= c->width || atoi(argv[i+1])<=0){
 		afficherErreur(7,'v','.',argv);
                 exit(7);
         }
@@ -558,7 +582,7 @@ void traceLigneVerticale(int i, char *argv[], struct canvas *c){
         int j;
 	changerCrayon(i,argv,c);
         afficheErreurLigneV(c,argv,i);
-        for(j = 0; j<c->height; j++){
+        for(j = 0; (unsigned int)j<c->height; j++){
         	c->pixels[j][atoi(argv[i + 1])] = c->pen;
         }
 }
@@ -627,7 +651,6 @@ void traceRectangle(int i, char *argv[], struct canvas *c){
 
 
 void traceSegment(int i,char *argv[], struct canvas *c){
-	int j,k;
         int segment[4];
         int *p;
         p = &segment[0];
@@ -694,18 +717,15 @@ void traceCercle(int i, char *argv[], struct canvas *c){
 			if(cercle[0]-cercle[2]>=0 && cercle[1]>=0){
 			c->pixels[cercle[0]-cercle[2]][cercle[1]]=c->pen;
 			}
-
     			while(x < y){
         			if(f >= 0) {		
             				y--;
             				ddF_y += 2;
             				f += ddF_y;
        				}
-    		
         			x++;
         			ddF_x += 2;
         			f += ddF_x + 1;
-
 				if(cercle[0]+x>=0 && cercle[1]+y>=0){
 				c->pixels[cercle[0]+x][cercle[1]+y] = c->pen;
 				}
@@ -734,11 +754,11 @@ void traceCercle(int i, char *argv[], struct canvas *c){
 }
 
 
-void afficheCouleurs(int argc, char *argv[], struct canvas *c){
+void afficheCouleurs(struct canvas *c){
 	c->couleur = 1;		
 	int j,k;
-	for(j = 0; j<c->height; j++){
-		for(k = 0; k<c->width; k++){
+	for(j = 0; (unsigned int)j<c->height; j++){
+		for(k = 0; (unsigned int)k<c->width; k++){
 			affichePixelColore(c->pixels[j][k]);
 		}
 		fprintf(stdout,"\n");
@@ -746,10 +766,10 @@ void afficheCouleurs(int argc, char *argv[], struct canvas *c){
 }
 
 
-void erreurCaractereInterdit(int argc, char *argv[], struct canvas *c){
+void erreurCaractereInterdit(char *argv[], struct canvas *c){
 	int i,j;
-	for(i = 0; i<c->height; i++){
-		for(j = 0; j<c->width; j++){
+	for(i = 0; (unsigned int)i<c->height; i++){
+		for(j = 0; (unsigned int)j<c->width; j++){
 			if(!isdigit(c->pixels[i][j]) && c->pixels[i][j]!='.'){
 				afficherErreur(1,'n',c->pixels[i][j],argv);
 				exit(1);
@@ -759,10 +779,9 @@ void erreurCaractereInterdit(int argc, char *argv[], struct canvas *c){
 }
 
 
-void gestionErreurs(int argc, char *argv[], struct canvas *c){
-	erreurCaractereInterdit(argc,argv,c);
+void gestionErreurs(char *argv[], struct canvas *c){
+	erreurCaractereInterdit(argv,c);
 	dimensionsValides(c->height,c->width, argv);
-	// ...
 }
 
 
@@ -779,16 +798,16 @@ void appelOptions(int argc, char *argv[], struct canvas *c){
         c->pen = '7';
         afficherManuel(argc, argv[0]);
         if(argv[1][1] != 'n'){
-                rempliPixelsAvecStdin(&argc, argv, c);
+                rempliPixelsAvecStdin(argv, c);
         }
         for(i = 1; i<argc; i++){
                 if(argv[i][0] == '-' && strlen(argv[i])==2 && !isdigit(argv[i][1])){
                         if(argv[i][1] == 'n'){
                                 verifierArgOptions(i, 'n', argc, argv);
-				canvasVide(argc, argv, argv[1], argv[2], c);
+				canvasVide(argv, argv[2], c);
                         }
                         else if(argv[i][1] == 's'){
-                                gestionErreurs(argc, argv, c);
+                                gestionErreurs(argv, c);
 				creationCanvas(*c);
                                 exit(0);
 			}
@@ -817,7 +836,7 @@ void appelOptions(int argc, char *argv[], struct canvas *c){
                                 changerCrayon(i,argv,c);
                         }
                         else if(argv[i][1] == 'k'){
-                                afficheCouleurs(argc,argv,c);
+                                afficheCouleurs(c);
                         }
                         else {
                                 afficherErreur(5,argv[i][1],'.',argv);
@@ -834,6 +853,6 @@ int main(int argc, char *argv[]) {
     c.couleur = 0;
     appelOptions(argc, argv, &c);
     creationCanvas(c);
-    gestionErreurs(argc,argv,&c);
+    gestionErreurs(argv,&c);
     return 0;
 }
