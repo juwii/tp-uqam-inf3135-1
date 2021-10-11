@@ -3,13 +3,13 @@
 
 ## Description
 
-Le projet consiste en l'affichage d'un canvas. Le canvas peut être affiché à partir d'un 
-fichier ou alors avec l'option `-n` avec le nombre de lignes et de colonnes.
-Différentes formes géométriques peuvent être affichées sur le canvas :
+Le projet consiste en l'affichage d'un canvas. Le canvas peut être affiché à partir d'un   
+fichier ou alors avec l'option `-n` avec le nombre de lignes et de colonnes.  
+Différentes formes géométriques peuvent être affichées sur le canvas :  
 
-* Une ligne horizontale à un indice choisi avec l'option `-h`.
+* Une ligne horizontale à un indice choisi avec l'option `-h`.  
 
-* Une ligne verticale à un indice choisi avec l'option `-v`.
+* Une ligne verticale à un indice choisi avec l'option `-v`.  
 
 * Un rectangle avec l'option `-r` en saissant les coordonnées d'un point puis la longueur
 et largeur souhaitées.
@@ -18,14 +18,14 @@ et largeur souhaitées.
 
 * Un cercle avec l'option `-c` en saisissant les coordonnées du centre et son rayon.
 
-Ces formes géométriques sont dessinées avec le chiffre 7 par défaut. 
-L'option `-p` permet de modifier le caractère avec lequel est dessiné le canvas.
-Le caractère peut être compris entre 0 et 7.
-L'option `-k` permet d'afficher le canvas en couleur avec son équivalent en code ASCII.
+Ces formes géométriques sont dessinées avec le chiffre 7 par défaut.   
+L'option `-p` permet de modifier le caractère avec lequel est dessiné le canvas.  
+Le caractère peut être compris entre 0 et 7.  
+L'option `-k` permet d'afficher le canvas en couleur avec son équivalent en code ASCII.  
 
-Ce projet est accompli dans le cadre du cours "INF3135" à l'UQAM enseigné par M. Serge Dogny.
-Il s'agit du TP1.
-Lien vers l'énoncé du TP : [sujet du travail](sujet.md).
+Ce projet est accompli dans le cadre du cours "INF3135" à l'UQAM enseigné par M. Serge Dogny.  
+Il s'agit du TP1.  
+Lien vers l'énoncé du TP : [sujet du travail](sujet.md).  
 
 ## Auteur
 
@@ -33,16 +33,16 @@ Juliette Létondot (LETJ74550003)
 
 ## Fonctionnement
 
-Pour faire fonctionner le projet, il faut tout d'abord le compiler. Pour le compiler, 
-il faut taper la commande `make` dans un terminal en se plaçant dans le dossier où est
-enregistré le projet.
-Pour exécuter le programme, taper `./canvascii`. Ajouter ensuite les options souhaitées.
-Les formats d'entrée sont des options avec ou sans argument : `./canvascii -n 1,1 -h 2`
-ou alors un fichier en entrée : `./canvascii -s < examples/empty5x8.canvas`.
-En sortie, on obtient un canvas affiché dans le terminal.
-La taille maximale d'un canvas est de 40x80.
+Pour faire fonctionner le projet, il faut tout d'abord le compiler. Pour le compiler,  
+il faut taper la commande `make` dans un terminal en se plaçant dans le dossier où est  
+enregistré le projet.  
+Pour exécuter le programme, taper `./canvascii`. Ajouter ensuite les options souhaitées.  
+Les formats d'entrée sont des options avec ou sans argument : `./canvascii -n 1,1 -h 2`  
+ou alors un fichier en entrée : `./canvascii -s < examples/empty5x8.canvas`.  
+En sortie, on obtient un canvas affiché dans le terminal.  
+La taille maximale d'un canvas est de 40x80.  
 
-Exemple :
+Exemple :  
 ```sh
 $ make
 gcc -o canvascii -Wall -Wextra -std=c11 canvascii.c 
@@ -72,7 +72,7 @@ manuel d'utilisation.
 ## Tests
 
 Pour lancer la série de tests, compiler le programme : `make` puis taper la commande 
-`make test`. 
+`make test`.   
 Voici le résultat de la série de tests :
 
  ✓ With no argument, shows help  
@@ -114,17 +114,17 @@ Voici le résultat de la série de tests :
 
 ## Dépendances
 
-[Bats](https://github.com/bats-core/bats-core)
-[GCC](https://gcc.gnu.org/)
+[Bats](https://github.com/bats-core/bats-core)  
+[GCC](https://gcc.gnu.org/)  
 
 ## Références
 
-[isdigit](https://www.programiz.com/c-programming/library-function/ctype.h/isdigit)
-[strtok](http://www.cplusplus.com/reference/cstring/strtok/)
+[isdigit](https://www.programiz.com/c-programming/library-function/ctype.h/isdigit)  
+[strtok](http://www.cplusplus.com/reference/cstring/strtok/)  
 [Algorithme de
-Bresenham](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
+Bresenham](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)  
 [Rosetta
-Code](http://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C)
+Code](http://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C)  
 
 ## État du projet
 

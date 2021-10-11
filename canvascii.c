@@ -1,6 +1,6 @@
 /**
  * TP 1 : affichage d'un canvas avec differentes formes geometriques et possiblement en couleurs
- * @author	Juliette Létondot 
+ * @author	Juliette Létondot (LETJ74550003) 
  */
 
 
@@ -656,7 +656,6 @@ void traceSegment(int i,char *argv[], struct canvas *c){
         p = &segment[0];
 	changerCrayon(i,argv,c);
 	trouveCoordonnees(p,argv,i,'l');
-	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm?section=7#All_cases
 	int dx,sx,dy,sy,err,e2;
 	int etat = 1;
 	dx = abs(segment[2]-segment[0]);
